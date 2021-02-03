@@ -7,7 +7,7 @@ eps = 0.6; % [-] Predator assimilation efficiency
 m = 0.1; % [day^-1] Predator mortality rate
 mu0 = 0.1; % [day^-1] Prey mortality rate
 
-cost = @(d) (exp(d)-1)./(exp(1)-1); % [day^-1] Defense cost as a function of defense investment
+cost = @(d)  (exp(d)-1)./(exp(1)-1); % [day^-1] Defense cost as a function of defense investment
 options = odeset('NonNegative',[1 2]);
 
 
