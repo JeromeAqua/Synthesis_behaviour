@@ -7,33 +7,34 @@ bN = 10^6*(3*10^-5)^3; % [m3 / day] Clearance rate of ciliates - 10^6 body volum
 bPR = 10^6*(10^-4)^3; % [m3 / day] Clearance rate of copepods - 10^6 body volumes per day - Kiorboe 2011
 bPN = 10^6*(10^-4)^3; % [m3 / day] Clearance rate of copepods - 10^6 body volumes per day - Kiorboe 2011
 epsN = 0.8; % [-] Assimilation efficiency for ciliates - Stoecker1984
-epsP = 0.7; % [-] Assimilation efficiency for copepods - Pinti2019b
-muR = 0.1; % [day^-1] Background mortality rate for diatoms
+epsPR = 0.7; % [-] Assimilation efficiency for copepods - Pinti2019b
+epsPN = 0.7; 
+muR = 0; % [day^-1] Background mortality rate for diatoms
 muN = 0.1; % [day^-1] Background mortality rate for ciliates
 muP = 0.1; % [day^-1] Background mortality rate for copepods - Visser2007
-fcost1 = @(tau,S) 1; %(1-S).^tau; % [-] Cost of a defense (in resource acq.) of level S when the tradeoff shape is governed by tau - Cadier2019
-fcost2 = @(tau,S) (1-S).^tau; % [-] Cost of a defense (in extra metabolism) of level S when the tradeoff shape is governed by tau - Cadier2019
+fcost1 = @(tau,S) (1-S).^tau; % [-] Cost of a defense (in resource acq.) of level S when the tradeoff shape is governed by tau - Cadier2019
+fcost2 = @(tau,S) 0;%(1-S).^tau; % [-] Cost of a defense (in extra metabolism) of level S when the tradeoff shape is governed by tau - Cadier2019
 fgain = @(tau,S) 1-S.^tau; % [-] Gain for a defense of level S when the tradeoff shape is governed by tau - Cadier2019
-tau = 0.9; % [-] Parameter for the trade-off shape - we choose it for now
+tau = 0.5; % [-] Parameter for the trade-off shape - we choose it for now
 
 dRdt = @(C, t, S) r*(1-C(1)/K)*C(1)-fcost1(tau,S)*bN*C(2)*C(1)/wN - bPR*C(1)*C(3)/wP - muR*C(1); % [gC m^-3 day^-1] Variation in diatom concentration over time
 dNdt = @(C, t, S) epsN*fcost1(tau,S)*bN*C(2)*C(1)/wN - fcost2(tau,S)*C(2) - fgain(tau,S)*bPN*C(3)*C(2)/wP - muN*C(2);  % [gC m^-3 day^-1] Variation in ciliate concentration over time
-dPdt = @(C, t, S) epsP*bPR*C(1)*C(3)/wP + epsP*fgain(tau,S)*bPN*C(3)*C(2)/wP - muP*C(3); % [gC m^-3 day^-1] Variation in copepod concentration over time
+dPdt = @(C, t, S) epsPR*bPR*C(1)*C(3)/wP + epsPN*fgain(tau,S)*bPN*C(3)*C(2)/wP - muP*C(3); % [gC m^-3 day^-1] Variation in copepod concentration over time
 
 dCdt = @(C,t,S) [dRdt(C,t,S); dNdt(C,t,S); dPdt(C,t,S)]; % [gC m^-3 day^-1] system of ODEs
 
-% %% Plot the trade-off curve
-% S = linspace(0,1,100);
-% T = 0.5;
-% plot(fgain(T,S),fcost(T,S))
-% xlabel('Defense level')
-% ylabel('Cost of defense')
+%% Plot the trade-off curve
+S = linspace(0,1,100);
+T = 0.2;
+plot(fgain(T,S),fcost1(T,S))
+xlabel('Defense level')
+ylabel('Cost of defense')
 
 
 %% Solve the system of ODEs
-S = .9; % [-] level of defense adopted by the ciliates
+S = .5; % [-] level of defense adopted by the ciliates
 options = odeset('NonNegative',[1 2 3]);
-[t, C] = ode15s(@(t,C) dCdt(C,t,S), 0:10:2000, [1 .1 10^-5],options);
+[t, C] = ode15s(@(t,C) dCdt(C,t,S), 0:10:1000, [1 .1 .1],options);
 
 figure, 
 subplot(311)
