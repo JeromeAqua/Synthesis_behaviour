@@ -73,12 +73,12 @@ mld = 10; % [m] Mixed layer depth
 T = @(z) 4 + 20*(1 - tanh((-mld +z)/100))/2; % [deg C] Temperature
 alpha = @(z) 0.5; %*2.^((T(z)-18)/10); % [day^-1] Degradation rate - assumed a Q10 of 2 and a reference temperature of 18
 
-uNfp = 0.1; % [m/day] Sinking rate of prey fecal pellet
-uPfp = 50; % [m/day] Sinking rate of prey fecal pellet
-uNc = 10; % [m/day] Sinking rate of prey carcasses
-uPc = 500; % [m/day] Sinking rate of predator carcasses
+uNfp = @(s) linspace(0.1,0.1,size(s,2)); % [m/day] Sinking rate of prey fecal pellet
+uPfp = @(s) (s+1)*50; % [m/day] Sinking rate of prey fecal pellet
+uNc = @(s) (s+1)*10; % [m/day] Sinking rate of prey carcasses
+uPc = @(s) linspace(500,500,size(s,2)); % [m/day] Sinking rate of predator carcasses
 
-speed = [uNfp uPfp uNc uPc]'; % [m/day] all speeds
+SPEED = @(s) [uNfp(s); uPfp(s); uNc(s); uPc(s)]; % [m/day] all speeds
 
 Zwc = 0:10:500;
 Flux = zeros(size(Zwc,2),size(S,2));
@@ -86,6 +86,7 @@ FluxC = zeros(size(Zwc,2),size(S,2));
 FluxP = zeros(size(Zwc,2),size(S,2));
 
 for i = 1:size(S,2)
+    speed = SPEED(S(i));
     So = @(z) (z<mld)*[Crea_N(i) Crea_P(i) Crea_Nc(i) Crea_Pc(i)]';
     [z, C] = ode45(@(z,c) (So(z)- alpha(z)*c)./speed,Zwc, [0 0 0 0]); % [C is gC / m^3 concentration of detritus in the water column]
     

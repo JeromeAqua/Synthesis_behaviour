@@ -23,12 +23,6 @@ dPdt = @(C, t, S) epsPR*bPR*C(1)*C(3)/wP + epsPN*fgain(tau,S)*bPN*C(3)*C(2)/wP -
 
 dCdt = @(C,t,S) [dRdt(C,t,S); dNdt(C,t,S); dPdt(C,t,S)]; % [gC m^-3 day^-1] system of ODEs
 
-%% Plot the trade-off curve
-S = linspace(0,1,100);
-T = 0.2;
-plot(fgain(T,S),fcost1(T,S))
-xlabel('Defense level')
-ylabel('Cost of defense')
 
 
 %% Solve the system of ODEs
