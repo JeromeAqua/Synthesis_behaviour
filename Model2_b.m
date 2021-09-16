@@ -42,10 +42,12 @@ subplot(221)
 plot(S,N)
 ylabel({'Concentration','[gC m^{-3}]'})
 title('prey')
+ylim([0 1.2])
 subplot(222)
 plot(S,P)
 title('predator')
 % ylabel('Predator [gC m^{-3}]')
+ylim([0 1.2])
 
     
 
@@ -57,15 +59,18 @@ Crea_Pc = muP*P; % [gC m^-3 day^-1] Creation rate of carcasses from predators
 
 subplot(223)
 plot(S,Crea_N)
-ylabel({'Source term','[gC m^-^3 day^-^1]'})
+ylabel({'Detritus production','rate [gC m^-^3 day^-^1]'})
 hold on
 plot(S,Crea_Nc)
+plot(S,Crea_Nc+Crea_N,'k')
+ylim([0 .18])
 
 subplot(224)
 plot(S,Crea_P)
 hold on
 plot(S,Crea_Pc)
-
+plot(S,Crea_Pc+Crea_P,'k')
+ylim([0 .18])
 
 
 %% Now plot the flux

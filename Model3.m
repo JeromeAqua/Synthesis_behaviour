@@ -30,21 +30,21 @@ S = .5; % [-] level of defense adopted by the ciliates
 options = odeset('NonNegative',[1 2 3]);
 [t, C] = ode15s(@(t,C) dCdt(C,t,S), 0:10:1000, [1 .1 .1],options);
 
-% figure, 
-% subplot(311)
-% plot(t,C(:,1))
-% ylabel('Diatoms')
-% hold on
-% 
-% subplot(312)
-% plot(t,C(:,2))
-% ylabel('Ciliates')
-% hold on
-% 
-% subplot(313)
-% plot(t,C(:,3))
-% ylabel('Copepods')
-% hold on
+figure, 
+subplot(311)
+plot(t,C(:,1))
+ylabel('Diatoms')
+hold on
+
+subplot(312)
+plot(t,C(:,2))
+ylabel('Ciliates')
+hold on
+
+subplot(313)
+plot(t,C(:,3))
+ylabel('Copepods')
+hold on
 
 %% Compute detritus creation rate
 phi = 0.4; % [-] (1-assim efficiency)/assim efficiency - ratio between growth and what is excreted as FP
@@ -83,7 +83,7 @@ So = @(z) (z<mld)*[Crea_R Crea_N Crea_P Crea_Rc Crea_Nc Crea_Pc]';
 F = speed'.*C; % [gC / m2 / day] Flux at each depth
 Ftot = sum(F,2); % [gC / m2 / day] Total flux at each depth
 
-% figure,
+figure,
 plot(Ftot, Zwc)
 ylabel('Depth [m]')
 xlabel('Flux [gC m^{-2} day^{-1}]')
